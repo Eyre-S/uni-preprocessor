@@ -1,0 +1,42 @@
+##############################################################
+##                                                          ##
+##                     if:def Template                      ##
+##                                                          ##
+##  files that help to check is if-def is running properly  ##
+##                               -- by A.C. Sukazyo Eyre    ##
+##                                                          ##
+##############################################################
+
+root: true
+# -- #ifdef app
+multi_export: true
+# -- #endif
+# -- #ifdef router
+cache_path: "./caches"
+mm_cache: true
+# -- #endif
+
+import:
+  - "@runs-config"
+  # -- #ifdef android
+  ## SELinux config library. should be safely removed if no need to use selinux enhanced mode.
+  - "@runs-selinux-enhanced"
+  # -- #endif
+
+runs:
+  # -- #ifdef windows
+  ## Config template that for Windows only
+  template: "@runs-config/windows.yaml"
+  # -- #endif
+  # -- #ifdef linux android router
+  ## Linux config template can be used on any Linux based device
+  template: "@runs-config/linux.yaml"
+  # -- #endif
+  # -- #ifdef android
+  ## Android need to be selinux capability set to on
+  selinux_enhanced: true
+  selinux_policy:
+    template: "@runs-selinux-enhanced/android.yaml"
+  # -- #endif
+  use_alpha: true
+  version_policy: "*.*.*/[BASE_SET|EXT_SET](?+*)"
