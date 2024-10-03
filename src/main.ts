@@ -4,6 +4,7 @@ import fs from "node:fs"
 import app from "./app.js"
 import res from "./res/index.js"
 import ifdefJs from "./libs/ifdef-js.js"
+import path from "node:path"
 
 let args = process.argv.slice(2)
 
@@ -15,7 +16,7 @@ if (args.includes("--help") || args.includes("-h")) {
 	process.exit(0);
 }
 if (args.includes("--version") || args.includes("-v")) {
-	console.log(`Uni Preprocessor - v${app.version}`)
+	console.log(`Universal Preprocessor - v${app.version}`)
 	process.exit(0);
 }
 
@@ -47,8 +48,18 @@ function result (result: string) {
 	}
 	
 	if (output_file != null) {
+		
+		const out_path = path.parse(output_file)
+		const out_dir = out_path.dir
+		logs(`debug: output dir: ${out_dir}`)
+		if (!fs.existsSync(out_dir)) {
+			logs(`seems output dir not exists, creating output directory: ${out_dir}`)
+			fs.mkdirSync(out_dir, { recursive: true })
+		}
+		
 		logs(`write output to ${output_file}`)
 		fs.writeFileSync(output_file, result)
+		
 	}
 	
 }
@@ -75,6 +86,7 @@ for (let i = 0; i < args.length; i++) {
 		i++; arg = args[i]
 		output_file = arg
 		logs(`set output file to: ${output_file}`)
+		log_mode = true
 		continue
 	}
 	

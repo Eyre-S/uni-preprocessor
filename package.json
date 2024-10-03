@@ -1,7 +1,7 @@
 {
 	"name": "uni-preprocessor",
 	"description": "A (Cpp-like?) preprocessor for any programming language or any config texts or just plain text. Written in TypeScript/NodeJS",
-	"version": "0.2.2",
+	"version": "0.2.3",
 	"author": {
 		"name": "A.C. Sukazyo Eyre",
 		"email": "sukazyo@outlook.com"
@@ -34,9 +34,10 @@
 	"scripts": {
 		"clean": "rimraf dist",
 		"cli": "tsx src/main.ts",
+		"upp": "tsx src/main.ts",
 		"build": "tsc && cpy src/res/* dist/res/ && rimraf dist/res/index.ts",
 		"test": "jest",
-		"publish": "yarn build && yarn publish"
+		"publishing": "yarn build && yarn publish"
 	},
 	"dependencies": {},
 	"devDependencies": {

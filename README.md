@@ -1,6 +1,9 @@
-# uni-preprocessor
+# Universal Preprocessor
 
-An util library / cli tool for preprocessing files.
+[![NPM Version](https://img.shields.io/npm/v/uni-preprocessor)](https://www.npmjs.com/package/uni-preprocessor)
+[![NPM Downloads](https://img.shields.io/npm/dy/uni-preprocessor)](https://www.npmjs.com/package/uni-preprocessor)
+
+An util library / cli tool for preprocessing any type of files.
 
 Currently used implementation is [ifdef.js](https://github.com/davebalmer/ifdefjs), written in Dave Balmer. You can find more about how it works there.
 
