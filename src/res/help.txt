@@ -1,0 +1,65 @@
+  
+  Uni Preprocessor - v{{app_version}}
+  
+  USAGE
+  
+    $ uni-preprocessor --help
+    
+    $ uni-preprocessor --version
+    
+    $ uni-preprocessor [options] source_file
+    
+    For the source file, do the pre-process, and output the preprocessed
+    content to the console.
+    
+    Currently only supports one input file.
+    
+    You can also use the alias upp instead of the full name
+    uni-preprocessor.
+  
+  OPTIONS
+    
+    -h  --help          Print this help page.
+    
+    -v  --version       Print the application version.
+    
+    -t  --target        Set which targets should be applied.
+                        Can be set multiple times, or you can use
+                        spaces or commas(,) to separate numeric
+                        target names.
+    
+    -V  --verbose       Print the verbose information, usually for
+                        debugging.
+                        If this is enabled, the preprocessed result
+                        will not be printed to the console, so you
+                        need to set --output manually to get the
+                        result.
+    
+    -o  --output        Set the preprocessed result file location.
+        --out           If this is set, the result will not be printed
+                        to the console, but the log will be printed.
+                        So it is equivalent to --verbose in CURRENT
+                        version.
+                        Currently only supports one output file.
+  
+  EXAMPLE
+    
+    $ uni-preprocessor --target windows source.js > source.windows.js
+    
+    Process the source.js file, with windows target variable. Then uses
+    the shell's output redirect to write the result to source.windows.js
+    file.
+    
+    $ upp -v source.html --target vue,windows,local -o release.html
+    
+    Process the source.html file with targets vue, windows and local.
+    Output the result directly to file release.html, and log the logs
+    to console.
+    
+    $ upp source.txt --target v1 -t ext1,ext2
+    
+    Process the file source.txt with targets v1, ext1 and ext2, and show
+    the result in console.
+  
+  
+  This Uni Preprocessor does NOT have super goose powers!

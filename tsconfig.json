@@ -5,24 +5,35 @@
 		"target": "ES2022",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"lib": ["ESNext"],
+		"lib": ["ES2022"],
 		"types": ["node"],
 		"useDefineForClassFields": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
 		
-		"rootDir": "./",
+		"declaration": true,
+		"esModuleInterop": true,
+		"sourceMap": true,
+		"inlineSources": true,
+		
+		"strict": true,
+		"isolatedModules": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowJs": false,
+		
+		"rootDir": "src",
 		"outDir": "dist",
 		
 		"baseUrl": "./",
 		"paths": {
-			"@/*": [ "src/*" ],
-			"@test/*": [ "test/*" ]
+			"@/*": [ "src/*" ]
 		}
 		
 	},
 	
 	"include": [
 		"./src/**/*",
-		"./test/**/*"
+		"./package.json"
 	],
 	
 	"exclude": [

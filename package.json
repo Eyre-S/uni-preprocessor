@@ -1,7 +1,7 @@
 {
 	"name": "uni-preprocessor",
 	"description": "A (Cpp-like?) preprocessor for any programming language or any config texts or just plain text. Written in TypeScript/NodeJS",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"author": { "name": "A.C. Sukazyo Eyre", "email": "sukazyo@outlook.com" },
 	"contributors": [
 		{ "name": "A.C. Sukazyo Eyre", "email": "sukazyo@outlook.com" }
@@ -12,27 +12,25 @@
 	},
 	"license": "Apache-2.0",
 	"type": "module",
-	"main": "dist/index.js",
-	"module": "dist/index.mjs",
-	"exports": {
-		"import": "./dist/index.mjs",
-		"require": {
-			"types": "./dist/index.d.ts",
-			"default": "./dist/index.js"
-		}
-	},
-	"scripts": {
-		"clean": "rimraf dist",
-		"build": "tsc -p tsconfig.json",
-		"test": "jest"
-	},
 	"files": [
 		"src",
 		"dist",
-		"CHANGELOG.md",
 		"LICENSE",
 		"README.md"
 	],
+	"exports": "./dist/index.js",
+	"main": "dist/index.js",
+	"typings": "dist/index.d.ts",
+	"bin": {
+		"uni-preprocessor": "dist/main.js",
+		"upp": "dist/main.js"
+	},
+	"scripts": {
+		"clean": "rimraf dist",
+		"cli": "tsx src/main.ts",
+		"build": "tsc",
+		"test": "jest"
+	},
 	"dependencies": {},
 	"devDependencies": {
 		"@types/jest": "^29.5.0",
