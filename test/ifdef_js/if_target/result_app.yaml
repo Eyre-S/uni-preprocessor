@@ -1,0 +1,5 @@
+root: true
+#ifdef app
+multi_export: true
+cache_path: "./caches"
+mm_cache: true

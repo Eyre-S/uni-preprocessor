@@ -1,0 +1,11 @@
+root: true
+#ifdef app
+multi_export: true
+#endif
+#iftarget app
+cache_path: "./caches"
+mm_cache: true
+#endif
+#iftarget system
+this_should_exists: false
+#endif

@@ -1,7 +1,7 @@
 {
 	"name": "uni-preprocessor",
 	"description": "A (Cpp-like?) preprocessor for any programming language or any config texts or just plain text. Written in TypeScript/NodeJS",
-	"version": "0.2.3",
+	"version": "0.3.0",
 	"author": {
 		"name": "A.C. Sukazyo Eyre",
 		"email": "sukazyo@outlook.com"

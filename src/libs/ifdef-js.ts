@@ -10,9 +10,44 @@
  * @license MIT
  */
 
-const ifdefRegex: RegExp   = /\#(ifdef|ifndef|endif)/i;
-const ifndefRegex: RegExp  = /\#ifndef/i;
-const allRegex: RegExp     = /\#(ifdef|ifndef|endif)\s+\w+/i; // at least some target
+
+
+export interface IfdefJsConfig {
+	
+	defines?: Record<string, boolean>,
+	alternative_target_tagname?: {
+		start: string,
+		start_rev: string,
+		end: string
+	} | string
+	
+}
+
+export function getTagRegex (configs?: IfdefJsConfig): [RegExp, RegExp, RegExp] {
+	
+	if (configs?.alternative_target_tagname) {
+		const [start, start_rev, end] = (() => {
+			const att = configs.alternative_target_tagname
+			if (typeof att == 'string') {
+				return [`if${att}`, `ifn${att}`, `endif`]
+			} else {
+				return [att.start, att.start_rev, att.end]
+			}
+		})()
+		return [
+			new RegExp(`\\#(${start}|${start_rev}|${end})`, "i"),
+			new RegExp(`\\#${start_rev}`, "i"),
+			new RegExp(`\\#(${start}|${start_rev}|${end})\\s+\\w+`, "i")
+		]
+	} else {
+		return [
+			/\#(ifdef|ifndef|endif)/i,
+			/\#ifndef/i,
+			/\#(ifdef|ifndef|endif)\s+\w+/i
+		]
+	}
+	
+}
 
 /**
  * Using the ifdef.js logic to process a string file.
@@ -24,12 +59,14 @@ const allRegex: RegExp     = /\#(ifdef|ifndef|endif)\s+\w+/i; // at least some t
  * @returns An array, the first element is the processed content, the second is the warning list.
  *          If the ifdef tag is not closed until the file end, a warnings will be added to the warning list.
  */
-export function process_string (file: string, targets: string[]): [string, string[]] {
+export function process_string (file: string, targets: string[], configs?: IfdefJsConfig): [string, string[]] {
+	
+	const [ifdefRegex, ifndefRegex, allRegex] = getTagRegex(configs)
+	const targetRegex: RegExp = new RegExp(targets.join("|"))
 	
 	let warnings: string[] = []
 	let paused = false
 	let processed_lines: string[] = []
-	const targetRegex: RegExp = new RegExp(targets.join("|"))
 	
 	const data = file.split("\n")
 	
@@ -75,5 +112,6 @@ export function process_string (file: string, targets: string[]): [string, strin
 }
 
 export default {
-	process_string
+	process_string,
+	getTagRegex
 }
