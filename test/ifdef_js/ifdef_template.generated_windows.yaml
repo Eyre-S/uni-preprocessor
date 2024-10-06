@@ -1,0 +1,20 @@
+##############################################################
+##                                                          ##
+##                     if:def Template                      ##
+##                                                          ##
+##  files that help to check is if-def is running properly  ##
+##                               -- by A.C. Sukazyo Eyre    ##
+##                                                          ##
+##############################################################
+
+root: true
+multi_export: true
+
+import:
+  - "@runs-config"
+
+runs:
+  ## Config template that for Windows only
+  template: "@runs-config/windows.yaml"
+  use_alpha: true
+  version_policy: "*.*.*/[BASE_SET|EXT_SET](?+*)"

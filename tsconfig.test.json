@@ -2,12 +2,23 @@
 	
 	"compilerOptions": {
 		
+		"composite": true,
 		"target": "ES2022",
 		"module": "NodeNext",
 		"moduleResolution": "NodeNext",
-		"lib": ["ESNext"],
+		"lib": ["ES2022"],
 		"types": ["node"],
 		"useDefineForClassFields": true,
+		"skipLibCheck": true,
+		"resolveJsonModule": true,
+		
+		"strict": true,
+		"isolatedModules": true,
+		"forceConsistentCasingInFileNames": true,
+		"allowJs": false,
+		
+		"rootDir": "./",
+		"outDir": "./dist-test",
 		
 		"baseUrl": "./",
 		"paths": {
@@ -19,7 +30,8 @@
 	
 	"include": [
 		"./src/**/*",
-		"./test/**/*"
+		"./test/**/*",
+		"package.json"
 	],
 	
 	"exclude": [
