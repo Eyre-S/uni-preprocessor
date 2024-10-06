@@ -1,7 +1,6 @@
-import assert from "assert";
-import { describe, it } from "node:test";
 import ifdefJs, { IfdefJsConfig, process_string } from "@/libs/ifdef-js.js";
 import fs from "fs";
+import { expect } from "chai";
 
 const test_configs: {
 	saveName: string,
@@ -37,37 +36,39 @@ function process (func: () => [string, string[]]): string {
 
 describe("when using ifdef backend", () => {
 	
-	test_configs.forEach(config => it(`using template ${config.saveName} works`, (t) => {
-			
-			const processed = process(() =>
-				process_string(readTemplate(), config.appliedTargets, config.configs)
-			)
-			
-			assert.equal(readConfigTemplate(config.saveName), processed)
-			
+	test_configs.forEach(config => it(`using template ${config.saveName} works`, () => {
+		
+		const processed = process(() =>
+			process_string(readTemplate(), config.appliedTargets, config.configs)
+		)
+		
+		expect(processed).equals(readConfigTemplate(config.saveName))
+		
 	}))
 	
 	describe("on defining alternative target tagname", () => {
 		
 		it ("using a string name should works", () => {
-			assert.deepStrictEqual(ifdefJs.getTagRegex(), ifdefJs.getTagRegex({ alternative_target_tagname: "def" }))
+			expect(ifdefJs.getTagRegex({ alternative_target_tagname: "def" }))
+				.deep.equal(ifdefJs.getTagRegex())
 		})
 		
 		it ("using a object to define three tagname should works", () => {
-			assert.deepStrictEqual(ifdefJs.getTagRegex(), ifdefJs.getTagRegex({ alternative_target_tagname: {
+			expect(ifdefJs.getTagRegex({ alternative_target_tagname: {
 				start: "ifdef",
 				start_rev: "ifndef",
 				end: "endif"
-			}}))
+			}})).deep.equals(ifdefJs.getTagRegex())
 		})
 		
 		it ("should available to use in process_string", () => {
+			
 			const processed = process(() => process_string(
 				read("if_target/source"), ["app"],
 				{ alternative_target_tagname: "target" }
 			))
 			
-			assert.equal(read("if_target/result_app"), processed)
+			expect(processed).equals(read("if_target/result_app"))
 			
 		})
 		

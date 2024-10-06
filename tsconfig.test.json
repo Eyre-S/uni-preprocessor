@@ -3,11 +3,12 @@
 	"compilerOptions": {
 		
 		"composite": true,
+		
 		"target": "ES2022",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
+		"module": "ESNext",
+		"moduleResolution": "Bundler",
 		"lib": ["ES2022"],
-		"types": ["node"],
+		"types": ["node", "mocha"],
 		"useDefineForClassFields": true,
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
@@ -16,9 +17,6 @@
 		"isolatedModules": true,
 		"forceConsistentCasingInFileNames": true,
 		"allowJs": false,
-		
-		"rootDir": "./",
-		"outDir": "./dist-test",
 		
 		"baseUrl": "./",
 		"paths": {

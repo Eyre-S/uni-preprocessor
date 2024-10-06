@@ -39,14 +39,18 @@
 		"build:ts": "tsc",
 		"build:res": "cpy src/res/* dist/res/ && rimraf dist/res/index.ts",
 		"test": "mocha",
+		"coverage": "nyc yarn test",
 		"prepack": "yarn build"
 	},
 	"dependencies": {},
 	"devDependencies": {
-		"@types/jest": "^29.5.0",
+		"@types/chai": "^5.0.0",
+		"@types/mocha": "^10.0.8",
 		"@types/node": "22.7.4",
+		"chai": "^5.1.1",
 		"cpy-cli": "^5.0.0",
 		"mocha": "^10.7.3",
+		"mochawesome": "^7.1.3",
 		"rimraf": "6.0.1",
 		"tsx": "4.19.1",
 		"typescript": "^5.0.4"

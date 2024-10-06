@@ -1,0 +1,11 @@
+{
+	"$schema": "https://json.schemastore.org/mocharc.json",
+	"package": "./package.json",
+	"reporter": "spec",
+	"require": "tsx",
+	"recursive": true,
+	"extension": [".js", ".cjs", ".mjs", ".ts"],
+	"parallel": false,
+	"color": true,
+	"inline-diffs": true
+}
