@@ -14,7 +14,9 @@
 
 export interface IfdefJsConfig {
 	
-	defines?: Record<string, boolean>,
+	defines?: {
+		[key: string]: string
+	},
 	alternative_target_tagname?: {
 		start: string,
 		start_rev: string,
@@ -96,8 +98,15 @@ export function process_string (file: string, targets: string[], configs?: Ifdef
 			}
 		}
 		else {
-			if (!paused)
-				processed_lines.push(l)
+			if (!paused) {
+				let line = l
+				if (configs?.defines != undefined) {
+					for (const [key, value] of Object.entries(configs.defines)) {
+						line = line.replaceAll(key, value)
+					}
+				}
+				processed_lines.push(line)
+			}
 		}
 	}
 	

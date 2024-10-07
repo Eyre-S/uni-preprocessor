@@ -1,0 +1,12 @@
+{
+	"name": "one-of-them",
+	"description": "A library that records every one we should remember.",
+	"version": "10.0.1-RC2+windows",
+	"scripts": {
+		"load": "node ./load.js",
+		"test": "node-win ./test.js"
+	},
+	"dependencies": {
+		"@one-of-them/utils-windows": "10.0.1-RC2+windows"
+	}
+}

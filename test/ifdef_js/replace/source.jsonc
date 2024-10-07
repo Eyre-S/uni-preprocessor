@@ -1,0 +1,22 @@
+{
+	"name": "one-of-them",
+	"description": "A library that records every one we should remember.",
+	"version": "{{version}}",
+	"scripts": {
+		"load": "node ./load.js",
+		// #ifntarget windows
+		"test": "node ./test.js"
+		// #endif
+		// #iftarget windows
+		"test": "node-win ./test.js"
+		// #endif
+	},
+	"dependencies": {
+		// #iftarget windows
+		"@one-of-them/utils-windows": "{{version}}"
+		// #endif
+		// #ifntarget windows
+		"@one-of-them/utils-universal": "{{version}}"
+		// #endif
+	}
+}

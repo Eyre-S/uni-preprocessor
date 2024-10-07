@@ -1,0 +1,12 @@
+{
+	"name": "one-of-them",
+	"description": "A library that records every one we should remember.",
+	"version": "10.8.2-dev5",
+	"scripts": {
+		"load": "node ./load.js",
+		"test": "node ./test.js"
+	},
+	"dependencies": {
+		"@one-of-them/utils-universal": "10.8.2-dev5"
+	}
+}
