@@ -2,5 +2,8 @@
 	"cSpell.words": [
 		"ifdef",
 		"tsup"
-	]
+	],
+	"mochaExplorer.configFile": ".mocharc.jsonc",
+	"mochaExplorer.require": "tsx",
+	"mochaExplorer.files": "test/**/*.ts"
 }

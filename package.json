@@ -1,7 +1,7 @@
 {
 	"name": "uni-preprocessor",
 	"description": "A (Cpp-like?) preprocessor for any programming language or any config texts or just plain text. Written in TypeScript/NodeJS",
-	"version": "0.3.0",
+	"version": "0.4.0",
 	"author": {
 		"name": "A.C. Sukazyo Eyre",
 		"email": "sukazyo@outlook.com"
@@ -51,6 +51,7 @@
 		"cpy-cli": "^5.0.0",
 		"mocha": "^10.7.3",
 		"mochawesome": "^7.1.3",
+		"nyc": "^17.1.0",
 		"rimraf": "6.0.1",
 		"tsx": "4.19.1",
 		"typescript": "^5.0.4"

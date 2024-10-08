@@ -10,44 +10,68 @@
  * @license MIT
  */
 
+import { FindReplacementConfig, FindReplacementItem } from "./find-replacement.js"
 
+export type TargetNameConfig = {
+	start: string,
+	start_rev: string,
+	end: string
+} | string
 
 export interface IfdefJsConfig {
 	
-	defines?: {
-		[key: string]: string
-	},
-	alternative_target_tagname?: {
-		start: string,
-		start_rev: string,
-		end: string
-	} | string
+	loose_parse?: boolean, // default: true
+	
+	prefix?: string, // default: "#"
+	suffix?: string, // default: undefined
+	ignorable_prefix?: string[], // default: ["\t", " "]
+	
+	alternative_target_tagname?: TargetNameConfig // default: "def"
+	
+	defines?: FindReplacementConfig, // default: []
 	
 }
 
-export function getTagRegex (configs?: IfdefJsConfig): [RegExp, RegExp, RegExp] {
+export class IfdefJsConfigured {
 	
-	if (configs?.alternative_target_tagname) {
-		const [start, start_rev, end] = (() => {
-			const att = configs.alternative_target_tagname
-			if (typeof att == 'string') {
-				return [`if${att}`, `ifn${att}`, `endif`]
-			} else {
-				return [att.start, att.start_rev, att.end]
-			}
-		})()
-		return [
-			new RegExp(`\\#(${start}|${start_rev}|${end})`, "i"),
-			new RegExp(`\\#${start_rev}`, "i"),
-			new RegExp(`\\#(${start}|${start_rev}|${end})\\s+\\w+`, "i")
-		]
-	} else {
-		return [
-			/\#(ifdef|ifndef|endif)/i,
-			/\#ifndef/i,
-			/\#(ifdef|ifndef|endif)\s+\w+/i
-		]
+	loose_parse: boolean = true
+	
+	prefix: string = "#"
+	suffix?: string
+	ignorable_prefix: string[] = ["\t", " "]
+	
+	alternative_target_tagname: TargetNameConfig = "def"
+	
+	defines: FindReplacementConfig = []
+	
+	public constructor (configs?: IfdefJsConfig) {
+		if (configs !== undefined) {
+			if (configs.loose_parse !== undefined) this.loose_parse = configs.loose_parse
+			if (configs.prefix !== undefined) this.prefix = configs.prefix
+			if (configs.suffix !== undefined) this.suffix = configs.suffix
+			if (configs.ignorable_prefix !== undefined) this.ignorable_prefix = configs.ignorable_prefix
+			if (configs.alternative_target_tagname !== undefined) this.alternative_target_tagname = configs.alternative_target_tagname
+			if (configs.defines !== undefined) this.defines = configs.defines
+		}
 	}
+	
+}
+
+export function getTagRegex (configs: TargetNameConfig = "def"): [RegExp, RegExp, RegExp] {
+	
+	const [start, start_rev, end] = (() => {
+		const att = configs
+		if (typeof att == 'string') {
+			return [`if${att}`, `ifn${att}`, `endif`]
+		} else {
+			return [att.start, att.start_rev, att.end]
+		}
+	})()
+	return [
+		new RegExp(`\\#(${start}|${start_rev}|${end})`, "i"),
+		new RegExp(`\\#${start_rev}`, "i"),
+		new RegExp(`\\#(${start}|${start_rev}|${end})\\s+\\w+`, "i")
+	]
 	
 }
 
@@ -63,7 +87,9 @@ export function getTagRegex (configs?: IfdefJsConfig): [RegExp, RegExp, RegExp] 
  */
 export function process_string (file: string, targets: string[], configs?: IfdefJsConfig): [string, string[]] {
 	
-	const [ifdefRegex, ifndefRegex, allRegex] = getTagRegex(configs)
+	const config = new IfdefJsConfigured(configs)
+	
+	const [ifdefRegex, ifndefRegex, allRegex] = getTagRegex(config.alternative_target_tagname)
 	const targetRegex: RegExp = new RegExp(targets.join("|"))
 	
 	let warnings: string[] = []
@@ -99,13 +125,7 @@ export function process_string (file: string, targets: string[], configs?: Ifdef
 		}
 		else {
 			if (!paused) {
-				let line = l
-				if (configs?.defines != undefined) {
-					for (const [key, value] of Object.entries(configs.defines)) {
-						line = line.replaceAll(key, value)
-					}
-				}
-				processed_lines.push(line)
+				processed_lines.push(execute_line_replacement(config.defines, l))
 			}
 		}
 	}
@@ -117,6 +137,17 @@ export function process_string (file: string, targets: string[], configs?: Ifdef
 		processed_lines.join("\n"),
 		warnings
 	]
+	
+}
+
+function execute_line_replacement (config: FindReplacementConfig, line: string): string {
+	
+	let new_line = line
+	const replacements = FindReplacementItem.praseConfig(config)
+	for (const i of replacements) {
+		new_line = i.find_replace(new_line)
+	}
+	return new_line
 	
 }
 

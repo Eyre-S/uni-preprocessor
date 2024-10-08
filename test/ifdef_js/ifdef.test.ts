@@ -1,4 +1,5 @@
-import ifdefJs, { IfdefJsConfig, process_string } from "@/libs/ifdef-js.js";
+import * as IfDefJs from "@/libs/ifdef-js";
+import { IfdefJsConfig, process_string } from "@/libs/ifdef-js.js";
 import fs from "fs";
 import { expect } from "chai";
 
@@ -51,16 +52,16 @@ describe("when using ifdef backend", () => {
 	describe("on defining alternative target tagname", () => {
 		
 		it ("using a string name should works", () => {
-			expect(ifdefJs.getTagRegex({ alternative_target_tagname: "def" }))
-				.deep.equal(ifdefJs.getTagRegex())
+			expect(IfDefJs.getTagRegex("def"))
+				.deep.equal(IfDefJs.getTagRegex())
 		})
 		
 		it ("using a object to define three tagname should works", () => {
-			expect(ifdefJs.getTagRegex({ alternative_target_tagname: {
+			expect(IfDefJs.getTagRegex({
 				start: "ifdef",
 				start_rev: "ifndef",
 				end: "endif"
-			}})).deep.equals(ifdefJs.getTagRegex())
+			})).deep.equals(IfDefJs.getTagRegex())
 		})
 		
 		it ("should available to use in process_string", () => {
@@ -76,7 +77,7 @@ describe("when using ifdef backend", () => {
 		
 	})
 	
-	describe("on defining defines to replace texts", () => {
+	describe("to replace texts", () => {
 		
 		const configs: TestConfig[] = [
 			{ saveName: "linux",   appliedTargets: ["linux"],   configs: { defines: { "{{version}}": "10.8.2-dev5" },        alternative_target_tagname: "target" } },
