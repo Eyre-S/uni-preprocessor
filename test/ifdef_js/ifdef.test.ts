@@ -52,16 +52,16 @@ describe("when using ifdef backend", () => {
 	describe("on defining alternative target tagname", () => {
 		
 		it ("using a string name should works", () => {
-			expect(IfDefJs.getTagRegex("def"))
-				.deep.equal(IfDefJs.getTagRegex())
+			expect(new IfDefJs.TargetMatchTags("def"))
+				.deep.equal(new IfDefJs.TargetMatchTags())
 		})
 		
 		it ("using a object to define three tagname should works", () => {
-			expect(IfDefJs.getTagRegex({
+			expect(new IfDefJs.TargetMatchTags({
 				start: "ifdef",
 				start_rev: "ifndef",
 				end: "endif"
-			})).deep.equals(IfDefJs.getTagRegex())
+			})).deep.equals(new IfDefJs.TargetMatchTags())
 		})
 		
 		it ("should available to use in process_string", () => {

@@ -12,66 +12,178 @@
 
 import { FindReplacementConfig, FindReplacementItem } from "./find-replacement.js"
 
+/**
+ * The config type for {@link TargetMatchTags}.
+ * 
+ * If provided as string, it will be used as `start` and `start_rev` prefix.
+ * For example, if it is `"target"`, it will replace `ifdef`, `ifndef`,
+ * and `endif` to `iftarget`, `ifntarget`, and `endif` respectively.
+ * 
+ * If provided as object, `start` and `start_rev` are required.
+ * `end` is optional, default to `"endif"`.
+ */
 export type TargetNameConfig = {
-	start: string,
-	start_rev: string,
-	end: string
+	/**
+	 * The start of ifdef block.
+	 * 
+	 * Default is `"ifdef"`.
+	 */
+	start: string
+	/**
+	 * The start of ifndef block.
+	 * 
+	 * Default is `"ifndef"`.
+	 */
+	start_rev: string
+	/**
+	 * The end of ifdef/ifndef block. Can be omitted.
+	 * 
+	 * Default is `"endif"`.
+	 */
+	end?: string
 } | string
 
+export class TargetMatchTags {
+	
+	public readonly start: string = "ifdef"
+	public readonly start_rev: string = "ifndef"
+	public readonly end: string = "endif"
+	
+	public constructor (configs?: TargetNameConfig) {
+		if (configs !== undefined) {
+			if (typeof configs == "string") {
+				this.start = "if" + configs
+				this.start_rev = "ifn" + configs
+			} else {
+				this.start = configs.start
+				this.start_rev = configs.start_rev
+				if (configs.end) this.end = configs.end
+			}
+		}
+	}
+	
+	public getRegexps (): [RegExp, RegExp, RegExp] {
+		return [
+			new RegExp(`\\#(${this.start}|${this.start_rev}|${this.end})`, "i"),
+			new RegExp(`\\#${this.start_rev}`, "i"),
+			new RegExp(`\\#(${this.start}|${this.start_rev}|${this.end})\\s+\\w+`, "i")
+		]
+	}
+	
+}
+
+/**
+ * The configuration object for ifdef.js.
+ * 
+ * @see https://github.com/davebalmer/ifdefjs
+ */
 export interface IfdefJsConfig {
 	
-	loose_parse?: boolean, // default: true
+	/**
+	 * Enable strict parse mode.
+	 * 
+	 * If the strict parse mode is disabled, the preprocessor parser
+	 * will treated all the line contains `ifdef` and its prefix
+	 * (which is defined below, and defaults is `"#"`) as a directive.
+	 * This is relatively the same behavior as the original *ifdef.js*
+	 * behavior.
+	 * 
+	 * If this mode is enabled, then one line must have *prefix* +
+	 * *directive* + *suffix* format (ignoring the *ignorable_prefix*)
+	 * to be treated as a directive. This may more likely be the C
+	 * preprocessor behavior.
+	 * 
+	 * Default is `false`.
+	 */
+	strict?: boolean
 	
-	prefix?: string, // default: "#"
-	suffix?: string, // default: undefined
-	ignorable_prefix?: string[], // default: ["\t", " "]
+	/**
+	 * The prefix of ifdef/ifndef directive.
+	 * 
+	 * Only after this prefix, the line will be treated as a directive.
+	 * 
+	 * Default is `"#"`.
+	 */
+	prefix?: string
+	/**
+	 * The suffix of ifdef/ifndef directive.
+	 * 
+	 * When you enable the strict parse mode, then one line
+	 * must ends with this suffix to be treated as a valid directive.
+	 * 
+	 * Regardless of whether strict mode is enabled or disabled, the
+	 * suffix will never to be treated as a part of the directive,
+	 * although in non strict mode, the suffix is not required to
+	 * exists.
+	 * 
+	 * Commonly used for make a preprocessor directive as a valid comment
+	 * in some language that required a comment start and comment end in
+	 * strict mode. Like in HTML, you can set the prefix to `<!--` and
+	 * the suffix to `-->`. For most other cases, you may not need it.
+	 * 
+	 * Default is `undefined`.
+	 */
+	suffix?: string
 	
-	alternative_target_tagname?: TargetNameConfig // default: "def"
+	/**
+	 * The ignorable characters when parsing directive.
+	 * 
+	 * This may only matters when the strict parse mode is enabled.
+	 * The characters in this array can be safely exists before the
+	 * prefix, or after the suffix in strict mode.
+	 * 
+	 * Commonly used for safely ignores indents, or typesetting characters.
+	 * 
+	 * Default is `["\t", " "]`.
+	 */
+	ignorable_prefix?: string[]
 	
-	defines?: FindReplacementConfig, // default: []
+	/**
+	 * The alternative target tagname.
+	 * 
+	 * If provided as string, it will be used as `start` and `start_rev` prefix.
+	 * For example, if it is `"target"`, it will replace `ifdef`, `ifndef`, and `endif` to `iftarget`, `ifntarget`, and `endif` respectively.
+	 * 
+	 * If provided as object, `start` and `start_rev` are required.
+	 * `end` is optional, default to `"endif"`.
+	 * 
+	 * Default is `"def"`, means the preprocessor will use `ifdef`, `ifndef`, `endif` directive set.
+	 */
+	alternative_target_tagname?: TargetNameConfig
+	
+	/**
+	 * The find-replacement config used to execute the find-replacement.
+	 * 
+	 * Default is an empty array.
+	 * 
+	 * @see {@link FindReplacementConfig}
+	 */
+	defines?: FindReplacementConfig
 	
 }
 
 export class IfdefJsConfigured {
 	
-	loose_parse: boolean = true
+	strict: boolean = false
 	
 	prefix: string = "#"
 	suffix?: string
 	ignorable_prefix: string[] = ["\t", " "]
 	
-	alternative_target_tagname: TargetNameConfig = "def"
+	alternative_target_tagname: TargetMatchTags = new TargetMatchTags()
 	
 	defines: FindReplacementConfig = []
 	
 	public constructor (configs?: IfdefJsConfig) {
 		if (configs !== undefined) {
-			if (configs.loose_parse !== undefined) this.loose_parse = configs.loose_parse
+			if (configs.strict !== undefined) this.strict = configs.strict
 			if (configs.prefix !== undefined) this.prefix = configs.prefix
 			if (configs.suffix !== undefined) this.suffix = configs.suffix
 			if (configs.ignorable_prefix !== undefined) this.ignorable_prefix = configs.ignorable_prefix
-			if (configs.alternative_target_tagname !== undefined) this.alternative_target_tagname = configs.alternative_target_tagname
+			if (configs.alternative_target_tagname !== undefined) this.alternative_target_tagname = new TargetMatchTags(configs.alternative_target_tagname)
 			if (configs.defines !== undefined) this.defines = configs.defines
 		}
 	}
-	
-}
-
-export function getTagRegex (configs: TargetNameConfig = "def"): [RegExp, RegExp, RegExp] {
-	
-	const [start, start_rev, end] = (() => {
-		const att = configs
-		if (typeof att == 'string') {
-			return [`if${att}`, `ifn${att}`, `endif`]
-		} else {
-			return [att.start, att.start_rev, att.end]
-		}
-	})()
-	return [
-		new RegExp(`\\#(${start}|${start_rev}|${end})`, "i"),
-		new RegExp(`\\#${start_rev}`, "i"),
-		new RegExp(`\\#(${start}|${start_rev}|${end})\\s+\\w+`, "i")
-	]
 	
 }
 
@@ -89,7 +201,7 @@ export function process_string (file: string, targets: string[], configs?: Ifdef
 	
 	const config = new IfdefJsConfigured(configs)
 	
-	const [ifdefRegex, ifndefRegex, allRegex] = getTagRegex(config.alternative_target_tagname)
+	const [ifdefRegex, ifndefRegex, allRegex] = config.alternative_target_tagname.getRegexps()
 	const targetRegex: RegExp = new RegExp(targets.join("|"))
 	
 	let warnings: string[] = []
@@ -152,6 +264,5 @@ function execute_line_replacement (config: FindReplacementConfig, line: string):
 }
 
 export default {
-	process_string,
-	getTagRegex
+	process_string
 }
